@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Salesforce — hide currencies
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Hides the (AUD $xx.xx) from Salesforce
 // @author       Mike Kelly @curioushuman
 // @match        https://negotiate.lightning.force.com/*
@@ -13,7 +13,7 @@
     'use strict';
 
     var pauseTime = 1500;
-    var amountPattern = /[A-Z]{3} ([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9]) \([A-Z]{3} ([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])\)/
+    var amountPattern = /([A-Z]{3}) ([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9]) \([A-Z]{3} ([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])\)/
 
     var hideCurrencies = function() {
         var currencies = $('span.forceOutputCurrency:not(.currencyHidden)');
@@ -23,7 +23,7 @@
             currencies.each(function(index) {
                 currencyMatches = $(this).text().match(amountPattern);
                 if (currencyMatches !== null) {
-                    currencyAmount = currencyMatches[1] + currencyMatches[3];
+                    currencyAmount = currencyMatches[1] + " " + currencyMatches[2] + currencyMatches[4];
                     $(this).text(currencyAmount).addClass('currencyHidden');
                 }
             });
