@@ -12,21 +12,23 @@
 (function() {
     'use strict';
 
-    var attemptIndex = 0;
-    var extractAmount = /[A-Z]* ([0-9]*\.[0-9]*) \([A-Z]* [0-9]*\.[0-9]*\)/
+    var pauseTime = 1500;
+    var amountPattern = /[A-Z]{3} ([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9]) \([A-Z]{3} ([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])\)/
 
     var hideCurrencies = function() {
         var currencies = $('span.forceOutputCurrency:not(.currencyHidden)');
+        var currencyMatches = [];
+        var currencyAmount = '';
         if (currencies.length > 0) {
             currencies.each(function(index) {
-                var currencyAmount = $(this).text().match(extractAmount)[1];
-                $(this).text(currencyAmount);
+                currencyMatches = $(this).text().match(amountPattern);
+                if (currencyMatches !== null) {
+                    currencyAmount = currencyMatches[1] + currencyMatches[3];
+                    $(this).text(currencyAmount).addClass('currencyHidden');
+                }
             });
         }
-        attemptIndex++;
-        if (attemptIndex < 10) {
-            setTimeout(hideCurrencies, 2000);
-        }
+        setTimeout(hideCurrencies, pauseTime);
     };
     hideCurrencies();
 
